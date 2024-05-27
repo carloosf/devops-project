@@ -2,7 +2,7 @@
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url      = "mysql://carlos:mysql_pass@localhost:3307/user_crud?allowPublicKeyRetrieval=true&useSSL=false"
 }
 
 generator client {
