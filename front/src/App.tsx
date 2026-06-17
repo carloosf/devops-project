@@ -1,15 +1,23 @@
-function App() {
+import { Link, Route, Routes } from "react-router-dom";
+
+import Home from "./pages/Home";
+import NotFound from "./pages/NotFound";
+import RedirectLoading from "./pages/RedirectLoading";
+
+export default function App() {
   return (
-    <main className="app-shell">
-      <section className="intro">
-        <p className="eyebrow">Projeto AV2</p>
-        <h1>Encurtador de Links</h1>
-        <p>
-          Estrutura inicial do frontend React TS pronta para integrar com a API.
-        </p>
-      </section>
-    </main>
+    <div className="app-shell">
+      <header className="topbar">
+        <Link to="/" className="brand">
+          Encurtador de Links
+        </Link>
+      </header>
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/r/:slug" element={<RedirectLoading />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </div>
   );
 }
-
-export default App;
