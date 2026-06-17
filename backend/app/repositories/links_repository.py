@@ -43,6 +43,26 @@ class LinksRepository:
             )
             return cursor.fetchone()
 
+    def increment_access_count(self, slug: str) -> sqlite3.Row | None:
+        with get_connection() as connection:
+            connection.execute(
+                """
+                UPDATE links
+                SET access_count = access_count + 1
+                WHERE slug = ?
+                """,
+                (slug,),
+            )
+            cursor = connection.execute(
+                """
+                SELECT id, slug, original_url, created_at, access_count
+                FROM links
+                WHERE slug = ?
+                """,
+                (slug,),
+            )
+            return cursor.fetchone()
+
     def delete(self, slug: str) -> bool:
         with get_connection() as connection:
             cursor = connection.execute("DELETE FROM links WHERE slug = ?", (slug,))

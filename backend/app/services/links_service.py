@@ -45,7 +45,7 @@ class LinksService:
         return self._to_response(row)
 
     def resolve_link(self, slug: str) -> LinkResolveResponse:
-        row = self.repository.get_by_slug(slug)
+        row = self.repository.increment_access_count(slug)
         if row is None:
             raise LinkNotFoundError("Link nao encontrado.")
 
