@@ -26,4 +26,15 @@ def get_connection() -> sqlite3.Connection:
 
 
 def initialize_database() -> None:
-    get_database_path()
+    with get_connection() as connection:
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS links (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                slug TEXT NOT NULL UNIQUE,
+                original_url TEXT NOT NULL,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                access_count INTEGER NOT NULL DEFAULT 0
+            )
+            """
+        )
