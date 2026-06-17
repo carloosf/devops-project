@@ -23,13 +23,30 @@ input {
 
 .app-shell {
   min-height: 100vh;
-  display: grid;
-  place-items: center;
+}
+
+.topbar {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 24px 32px;
+}
+
+.brand {
+  color: #172033;
+  font-size: 20px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.page {
+  max-width: 1120px;
+  margin: 0 auto;
   padding: 32px;
 }
 
-.intro {
+.hero {
   max-width: 720px;
+  margin-bottom: 32px;
 }
 
 .eyebrow {
@@ -48,4 +65,130 @@ h1 {
 p {
   font-size: 18px;
   line-height: 1.6;
+}
+
+.panel {
+  background: #ffffff;
+  border: 1px solid #dce3ee;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.compact {
+  max-width: 640px;
+}
+
+.link-form {
+  display: grid;
+  gap: 16px;
+}
+
+label {
+  display: grid;
+  gap: 8px;
+  font-weight: 700;
+}
+
+input {
+  width: 100%;
+  border: 1px solid #b9c5d8;
+  border-radius: 6px;
+  padding: 12px 14px;
+}
+
+button,
+.link-actions a,
+.panel a {
+  color: #ffffff;
+  background: #1f6feb;
+  border: 0;
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.feedback {
+  border-radius: 6px;
+  margin: 16px 0 0;
+  padding: 12px 14px;
+}
+
+.feedback a {
+  color: inherit;
+  font-weight: 800;
+}
+
+.error {
+  color: #7f1d1d;
+  background: #fee2e2;
+}
+
+.success {
+  color: #14532d;
+  background: #dcfce7;
+}
+
+.links-list {
+  margin-top: 32px;
+}
+
+.link-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  border-top: 1px solid #dce3ee;
+  padding: 18px 0;
+}
+
+.link-item p {
+  overflow-wrap: anywhere;
+  margin: 8px 0 0;
+}
+
+.link-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+}
+
+.redirect-page {
+  min-height: calc(100vh - 72px);
+  display: grid;
+  place-items: center;
+  padding: 32px;
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid #dce3ee;
+  border-top-color: #1f6feb;
+  border-radius: 999px;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 720px) {
+  h1 {
+    font-size: 36px;
+  }
+
+  .link-item,
+  .link-actions {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 }
