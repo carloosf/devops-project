@@ -57,26 +57,52 @@ export default function Home() {
   }
 
   return (
-    <main className="mx-auto max-w-6xl px-6 pb-12 pt-6 sm:px-8">
-      <section className="mb-8 max-w-3xl">
-        <p className="mb-2 text-sm font-black uppercase text-blue-700">
-          Projeto AV2
-        </p>
-        <h1 className="mb-4 text-4xl font-black leading-tight text-slate-950 sm:text-5xl">
-          Crie links curtos com uma passagem de loading.
-        </h1>
-        <p className="text-lg leading-8 text-slate-600">
-          Cole uma URL, gere um slug curto e compartilhe uma rota que abre uma
-          tela intermediaria antes do destino final.
-        </p>
+    <main className="h-[calc(100vh-3.5rem)] overflow-hidden p-3 sm:p-4">
+      <section className="mb-3 grid gap-3 lg:grid-cols-[minmax(0,1fr)_18rem]">
+        <div className="border border-emerald-500/30 bg-zinc-950/95 p-4 shadow-[0_0_24px_rgba(16,185,129,0.12)]">
+          <p className="font-mono text-xs font-black uppercase tracking-[0.28em] text-emerald-500">
+            Projeto AV2 :: link daemon
+          </p>
+          <h1 className="mt-2 font-mono text-2xl font-black leading-tight text-emerald-100 sm:text-3xl">
+            Encurtador de links
+            <span className="animate-pulse text-emerald-400">_</span>
+          </h1>
+          <p className="mt-2 max-w-3xl font-mono text-sm leading-6 text-zinc-400">
+            Gere slugs HTTP/HTTPS e envie visitantes para uma tela intermediaria
+            antes do redirecionamento final.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-3 border border-emerald-500/30 bg-zinc-950/95 font-mono text-xs text-zinc-400 lg:grid-cols-1">
+          <div className="border-r border-emerald-500/20 p-3 lg:border-b lg:border-r-0">
+            <span className="block text-emerald-400">STATUS</span>
+            <strong className="text-emerald-100">READY</strong>
+          </div>
+          <div className="border-r border-emerald-500/20 p-3 lg:border-b lg:border-r-0">
+            <span className="block text-emerald-400">PROTO</span>
+            <strong className="text-emerald-100">HTTP/S</strong>
+          </div>
+          <div className="p-3">
+            <span className="block text-emerald-400">LINKS</span>
+            <strong className="text-emerald-100">{links.length}</strong>
+          </div>
+        </div>
       </section>
 
-      <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
-        <form onSubmit={handleSubmit} className="grid gap-4">
-          <label className="grid gap-2 text-sm font-bold text-slate-800">
-            URL original
+      <section className="grid h-[calc(100%-8.5rem)] min-h-0 gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(22rem,28rem)]">
+        <div className="min-h-0 border border-emerald-500/30 bg-zinc-950/95 p-4 shadow-[0_0_24px_rgba(16,185,129,0.08)]">
+          <div className="mb-4 flex items-center justify-between border-b border-emerald-500/20 pb-3 font-mono text-xs">
+            <span className="font-black uppercase text-emerald-400">
+              new-shortlink.sh
+            </span>
+            <span className="text-zinc-500">POST /api/links</span>
+          </div>
+
+          <form onSubmit={handleSubmit} className="grid gap-4">
+            <label className="grid gap-2 font-mono text-xs font-bold uppercase tracking-wide text-emerald-300">
+              URL original
             <input
-              className="w-full rounded-md border border-slate-300 px-4 py-3 text-base outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              className="w-full border border-emerald-500/35 bg-black px-4 py-3 font-mono text-sm text-emerald-100 outline-none transition placeholder:text-zinc-600 focus:border-emerald-300 focus:shadow-[0_0_18px_rgba(52,211,153,0.25)]"
               type="url"
               required
               pattern="https?://.*"
@@ -85,15 +111,15 @@ export default function Home() {
               value={originalUrl}
               onChange={(event) => setOriginalUrl(event.target.value)}
             />
-            <span className="text-xs font-medium text-slate-500">
-              Apenas URLs com http:// ou https:// sao aceitas.
+            <span className="font-mono text-xs font-medium normal-case text-zinc-500">
+              accepted_protocols = ["http", "https"]
             </span>
           </label>
 
-          <label className="grid gap-2 text-sm font-bold text-slate-800">
-            Slug personalizado
+            <label className="grid gap-2 font-mono text-xs font-bold uppercase tracking-wide text-emerald-300">
+              Slug personalizado
             <input
-              className="w-full rounded-md border border-slate-300 px-4 py-3 text-base outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+              className="w-full border border-emerald-500/35 bg-black px-4 py-3 font-mono text-sm text-emerald-100 outline-none transition placeholder:text-zinc-600 focus:border-emerald-300 focus:shadow-[0_0_18px_rgba(52,211,153,0.25)]"
               placeholder="minha-rota"
               minLength={3}
               maxLength={40}
@@ -105,22 +131,22 @@ export default function Home() {
           <button
             type="submit"
             disabled={isLoading}
-            className="inline-flex w-full items-center justify-center rounded-md bg-blue-700 px-5 py-3 font-black text-white shadow-sm transition hover:bg-blue-800 disabled:cursor-wait disabled:opacity-70 sm:w-fit"
+              className="inline-flex w-full items-center justify-center border border-emerald-400 bg-emerald-400 px-5 py-3 font-mono text-sm font-black uppercase text-black transition hover:bg-emerald-300 disabled:cursor-wait disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 sm:w-fit"
           >
-            {isLoading ? "Criando..." : "Encurtar link"}
+              {isLoading ? "running..." : "./encurtar"}
           </button>
         </form>
 
         {error && (
-          <p className="mt-4 rounded-md bg-red-50 px-4 py-3 text-red-800">
-            {error}
+            <p className="mt-4 border border-red-500/40 bg-red-950/50 px-4 py-3 font-mono text-sm text-red-200">
+              error: {error}
           </p>
         )}
         {createdLink && (
-          <p className="mt-4 rounded-md bg-green-50 px-4 py-3 text-green-800">
-            Link criado:{" "}
+            <p className="mt-4 border border-emerald-500/40 bg-emerald-950/30 px-4 py-3 font-mono text-sm text-emerald-200">
+              created:{" "}
             <a
-              className="font-black underline underline-offset-4"
+                className="font-black text-emerald-300 underline underline-offset-4"
               href={createdLink.short_url}
               target="_blank"
               rel="noreferrer"
@@ -129,42 +155,53 @@ export default function Home() {
             </a>
           </p>
         )}
-      </section>
+        </div>
 
-      <section className="mt-8">
-        <h2 className="mb-3 text-2xl font-black text-slate-950">
-          Links cadastrados
-        </h2>
+        <div className="flex min-h-0 flex-col border border-emerald-500/30 bg-zinc-950/95 shadow-[0_0_24px_rgba(16,185,129,0.08)]">
+          <div className="flex items-center justify-between border-b border-emerald-500/20 p-4 font-mono text-xs">
+            <h2 className="font-black uppercase text-emerald-400">
+              links.log
+            </h2>
+            <span className="text-zinc-500">tail -f</span>
+          </div>
+
+          <div className="min-h-0 flex-1 overflow-y-auto p-4">
         {links.length === 0 ? (
-          <p className="text-slate-600">Nenhum link criado ainda.</p>
+              <p className="font-mono text-sm text-zinc-500">
+                nenhum registro encontrado
+              </p>
         ) : (
           links.map((link) => (
             <article
               key={link.id}
-              className="flex flex-col gap-4 border-t border-slate-200 py-5 sm:flex-row sm:items-center sm:justify-between"
+                  className="mb-3 border border-emerald-500/20 bg-black/70 p-3 font-mono"
             >
-              <div className="min-w-0">
-                <strong className="text-lg text-slate-950">{link.slug}</strong>
-                <p className="mt-1 break-words text-slate-600">
+                  <div className="mb-3 min-w-0">
+                    <strong className="text-sm text-emerald-300">
+                      /r/{link.slug}
+                    </strong>
+                    <p className="mt-1 break-words text-xs leading-5 text-zinc-500">
                   {link.original_url}
                 </p>
               </div>
-              <div className="flex shrink-0 flex-col gap-2 sm:items-end">
+                  <div className="flex items-center justify-between gap-3">
                 <a
-                  className="rounded-md bg-slate-950 px-4 py-2 text-center font-bold text-white transition hover:bg-slate-800"
+                      className="border border-emerald-500/60 px-3 py-2 text-xs font-black uppercase text-emerald-300 transition hover:bg-emerald-400 hover:text-black"
                   href={link.short_url}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  Abrir curto
+                      open
                 </a>
-                <span className="text-sm font-bold text-slate-500">
-                  {link.access_count} acessos
+                    <span className="text-xs text-zinc-500">
+                      hits={link.access_count}
                 </span>
               </div>
             </article>
           ))
         )}
+          </div>
+        </div>
       </section>
     </main>
   );
