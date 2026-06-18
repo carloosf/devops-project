@@ -43,7 +43,7 @@ def validation_exception_handler(
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
         content={
-            "detail": "Confira os dados enviados. A URL deve ser valida e o slug deve ter pelo menos 3 caracteres.",
+            "detail": "Confira os dados enviados. A URL deve comecar com http:// ou https:// e o slug deve ter pelo menos 3 caracteres.",
             "errors": exc.errors(),
         },
     )

@@ -1,10 +1,14 @@
 from datetime import datetime
 
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import AnyHttpUrl, BaseModel, Field
 
 
 class LinkCreate(BaseModel):
-    original_url: HttpUrl
+    original_url: AnyHttpUrl = Field(
+        ...,
+        description="URL original. Aceita apenas links iniciados com http:// ou https://.",
+        examples=["https://exemplo.com/minha-pagina"],
+    )
     custom_slug: str | None = Field(default=None, min_length=3, max_length=40)
 
 

@@ -3,6 +3,15 @@ import { FormEvent, useEffect, useState } from "react";
 import { createLink, listLinks } from "../services/api";
 import type { ShortLink } from "../types/link";
 
+function isHttpUrl(value: string) {
+  try {
+    const url = new URL(value.trim());
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 export default function Home() {
   const [links, setLinks] = useState<ShortLink[]>([]);
   const [originalUrl, setOriginalUrl] = useState("");
@@ -19,13 +28,20 @@ export default function Home() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setIsLoading(true);
     setError("");
     setCreatedLink(null);
 
+    const normalizedUrl = originalUrl.trim();
+    if (!isHttpUrl(normalizedUrl)) {
+      setError("Informe uma URL valida iniciada com http:// ou https://.");
+      return;
+    }
+
+    setIsLoading(true);
+
     try {
       const link = await createLink({
-        original_url: originalUrl,
+        original_url: normalizedUrl,
         custom_slug: customSlug || undefined,
       });
 
@@ -63,10 +79,15 @@ export default function Home() {
               className="w-full rounded-md border border-slate-300 px-4 py-3 text-base outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               type="url"
               required
+              pattern="https?://.*"
               placeholder="https://exemplo.com/minha-pagina"
+              title="Use uma URL iniciada com http:// ou https://."
               value={originalUrl}
               onChange={(event) => setOriginalUrl(event.target.value)}
             />
+            <span className="text-xs font-medium text-slate-500">
+              Apenas URLs com http:// ou https:// sao aceitas.
+            </span>
           </label>
 
           <label className="grid gap-2 text-sm font-bold text-slate-800">
