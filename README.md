@@ -25,6 +25,13 @@ devops-project/
 
 ## Como Rodar Com Docker Compose
 
+Clone o repositorio e entre na pasta do projeto:
+
+```bash
+git clone https://github.com/carloosf/devops-project.git
+cd devops-project
+```
+
 Crie os arquivos de ambiente a partir dos exemplos:
 
 ```bash
@@ -110,4 +117,4 @@ O workflow em `.github/workflows/main.yml` executa a cada push ou pull request p
 
 ## Membros
 
-- Carlos Silva
+- Carlos Augusto Ferreira da Silva - Matricula: 01564896
