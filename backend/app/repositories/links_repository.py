@@ -63,7 +63,25 @@ class LinksRepository:
             )
             return cursor.fetchone()
 
-    def delete(self, slug: str) -> bool:
+    def update(self, slug: str, new_slug: str, original_url: str) -> sqlite3.Row | None:
         with get_connection() as connection:
-            cursor = connection.execute("DELETE FROM links WHERE slug = ?", (slug,))
-            return cursor.rowcount > 0
+            cursor = connection.execute(
+                """
+                UPDATE links
+                SET slug = ?, original_url = ?
+                WHERE slug = ?
+                """,
+                (new_slug, original_url, slug),
+            )
+            if cursor.rowcount == 0:
+                return None
+
+            updated = connection.execute(
+                """
+                SELECT id, slug, original_url, created_at, access_count
+                FROM links
+                WHERE slug = ?
+                """,
+                (new_slug,),
+            )
+            return updated.fetchone()

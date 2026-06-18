@@ -12,6 +12,15 @@ class LinkCreate(BaseModel):
     custom_slug: str | None = Field(default=None, min_length=3, max_length=40)
 
 
+class LinkUpdate(BaseModel):
+    original_url: AnyHttpUrl = Field(
+        ...,
+        description="Nova URL original. Aceita apenas links iniciados com http:// ou https://.",
+        examples=["https://exemplo.com/minha-pagina-atualizada"],
+    )
+    custom_slug: str | None = Field(default=None, min_length=3, max_length=40)
+
+
 class LinkResponse(BaseModel):
     id: int
     slug: str

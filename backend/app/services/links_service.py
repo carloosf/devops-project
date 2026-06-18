@@ -4,7 +4,7 @@ import sqlite3
 
 from app.config import get_settings
 from app.repositories.links_repository import LinksRepository
-from app.schemas import LinkCreate, LinkResolveResponse, LinkResponse
+from app.schemas import LinkCreate, LinkResolveResponse, LinkResponse, LinkUpdate
 
 
 class LinkNotFoundError(Exception):
@@ -37,8 +37,22 @@ class LinksService:
     def list_links(self) -> list[LinkResponse]:
         return [self._to_response(row) for row in self.repository.list_all()]
 
-    def get_link(self, slug: str) -> LinkResponse:
-        row = self.repository.get_by_slug(slug)
+    def update_link(self, slug: str, payload: LinkUpdate) -> LinkResponse:
+        current = self.repository.get_by_slug(slug)
+        if current is None:
+            raise LinkNotFoundError("Link nao encontrado.")
+
+        new_slug = self._normalize_slug(payload.custom_slug) if payload.custom_slug else slug
+
+        try:
+            row = self.repository.update(
+                slug=slug,
+                new_slug=new_slug,
+                original_url=str(payload.original_url),
+            )
+        except sqlite3.IntegrityError as exc:
+            raise LinkSlugAlreadyExistsError("Slug ja esta em uso.") from exc
+
         if row is None:
             raise LinkNotFoundError("Link nao encontrado.")
 
@@ -50,11 +64,6 @@ class LinksService:
             raise LinkNotFoundError("Link nao encontrado.")
 
         return LinkResolveResponse(slug=row["slug"], original_url=row["original_url"])
-
-    def delete_link(self, slug: str) -> None:
-        deleted = self.repository.delete(slug)
-        if not deleted:
-            raise LinkNotFoundError("Link nao encontrado.")
 
     def _generate_slug(self) -> str:
         for _ in range(5):

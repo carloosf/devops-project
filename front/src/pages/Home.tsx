@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from "react";
 
-import { createLink, listLinks } from "../services/api";
+import { createLink, listLinks, updateLink } from "../services/api";
 import type { ShortLink } from "../types/link";
 
 function isHttpUrl(value: string) {
@@ -19,6 +19,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [createdLink, setCreatedLink] = useState<ShortLink | null>(null);
+  const [editingLink, setEditingLink] = useState<ShortLink | null>(null);
 
   useEffect(() => {
     listLinks()
@@ -40,20 +41,45 @@ export default function Home() {
     setIsLoading(true);
 
     try {
-      const link = await createLink({
+      const payload = {
         original_url: normalizedUrl,
         custom_slug: customSlug || undefined,
-      });
+      };
+      const link = editingLink
+        ? await updateLink(editingLink.slug, payload)
+        : await createLink(payload);
 
       setCreatedLink(link);
-      setLinks((currentLinks) => [link, ...currentLinks]);
+      setLinks((currentLinks) =>
+        editingLink
+          ? currentLinks.map((currentLink) =>
+              currentLink.id === link.id ? link : currentLink,
+            )
+          : [link, ...currentLinks],
+      );
       setOriginalUrl("");
       setCustomSlug("");
+      setEditingLink(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erro inesperado.");
     } finally {
       setIsLoading(false);
     }
+  }
+
+  function handleEdit(link: ShortLink) {
+    setEditingLink(link);
+    setCreatedLink(null);
+    setError("");
+    setOriginalUrl(link.original_url);
+    setCustomSlug(link.slug);
+  }
+
+  function handleCancelEdit() {
+    setEditingLink(null);
+    setOriginalUrl("");
+    setCustomSlug("");
+    setError("");
   }
 
   return (
@@ -95,7 +121,9 @@ export default function Home() {
             <span className="font-black uppercase text-emerald-400">
               new-shortlink.sh
             </span>
-            <span className="text-zinc-500">POST /api/links</span>
+            <span className="text-zinc-500">
+              {editingLink ? `PUT /api/links/${editingLink.slug}` : "POST /api/links"}
+            </span>
           </div>
 
           <form onSubmit={handleSubmit} className="grid gap-4">
@@ -121,6 +149,7 @@ export default function Home() {
             <input
               className="w-full border border-emerald-500/35 bg-black px-4 py-3 font-mono text-sm text-emerald-100 outline-none transition placeholder:text-zinc-600 focus:border-emerald-300 focus:shadow-[0_0_18px_rgba(52,211,153,0.25)]"
               placeholder="minha-rota"
+              required={Boolean(editingLink)}
               minLength={3}
               maxLength={40}
               value={customSlug}
@@ -128,13 +157,28 @@ export default function Home() {
             />
           </label>
 
-          <button
-            type="submit"
-            disabled={isLoading}
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <button
+                type="submit"
+                disabled={isLoading}
               className="inline-flex w-full items-center justify-center border border-emerald-400 bg-emerald-400 px-5 py-3 font-mono text-sm font-black uppercase text-black transition hover:bg-emerald-300 disabled:cursor-wait disabled:border-zinc-700 disabled:bg-zinc-800 disabled:text-zinc-500 sm:w-fit"
-          >
-              {isLoading ? "running..." : "./encurtar"}
-          </button>
+              >
+                {isLoading
+                  ? "running..."
+                  : editingLink
+                    ? "./salvar"
+                    : "./encurtar"}
+              </button>
+              {editingLink && (
+                <button
+                  type="button"
+                  onClick={handleCancelEdit}
+                  className="inline-flex w-full items-center justify-center border border-zinc-700 bg-black px-5 py-3 font-mono text-sm font-black uppercase text-zinc-300 transition hover:border-zinc-500 hover:text-white sm:w-fit"
+                >
+                  ./cancelar
+                </button>
+              )}
+            </div>
         </form>
 
         {error && (
@@ -144,7 +188,7 @@ export default function Home() {
         )}
         {createdLink && (
             <p className="mt-4 border border-emerald-500/40 bg-emerald-950/30 px-4 py-3 font-mono text-sm text-emerald-200">
-              created:{" "}
+              {editingLink ? "updated" : "saved"}:{" "}
             <a
                 className="font-black text-emerald-300 underline underline-offset-4"
               href={createdLink.short_url}
@@ -185,6 +229,13 @@ export default function Home() {
                 </p>
               </div>
                   <div className="flex items-center justify-between gap-3">
+                    <button
+                      type="button"
+                      onClick={() => handleEdit(link)}
+                      className="border border-zinc-700 px-3 py-2 text-xs font-black uppercase text-zinc-300 transition hover:border-emerald-500 hover:text-emerald-300"
+                    >
+                      edit
+                    </button>
                 <a
                       className="border border-emerald-500/60 px-3 py-2 text-xs font-black uppercase text-emerald-300 transition hover:bg-emerald-400 hover:text-black"
                   href={link.short_url}

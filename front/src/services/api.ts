@@ -7,6 +7,8 @@ type CreateLinkPayload = {
   custom_slug?: string;
 };
 
+type UpdateLinkPayload = CreateLinkPayload;
+
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const response = await fetch(`${API_URL}${path}`, {
     headers: {
@@ -31,6 +33,16 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 export function createLink(payload: CreateLinkPayload): Promise<ShortLink> {
   return request<ShortLink>("/api/links", {
     method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function updateLink(
+  slug: string,
+  payload: UpdateLinkPayload,
+): Promise<ShortLink> {
+  return request<ShortLink>(`/api/links/${slug}`, {
+    method: "PUT",
     body: JSON.stringify(payload),
   });
 }
